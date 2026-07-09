@@ -1,15 +1,10 @@
 import jwt from 'jsonwebtoken'
 import { Request, Response, NextFunction } from 'express'
+import 'cookie-session'
 
 interface userPayload {
     id: string;
     email: string;
-}
-
-interface RequestWithSession extends Request {
-    session?: {
-        jwt?: string
-    }
 }
 
 declare global {
@@ -20,9 +15,10 @@ declare global {
     }
 }
 
-export const currentUser = (req: RequestWithSession, res: Response, next: NextFunction) => {
+export const currentUser = (req: Request, res: Response, next: NextFunction) => {
     if (!req.session?.jwt) {
-        return res.send({ currentUser: null })
+        res.send({ currentUser: null })
+        return;
     }
 
     try {
